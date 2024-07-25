@@ -1,0 +1,14 @@
+{{ if question.context_text }}
+    <h1>{{ question.question_text }}</h1>
+    <br/>
+    <h2>Nombre y número de los votos:</h2>
+    <br/>
+    <ul>
+        {% for choice in question.choice_set.all %}
+            <li>{{ choice.choice_text }}</li>
+            <li>{{ choice.vote_counter }}</li>
+        {% endfor %}
+    </ul>
+{{ else }}
+    <p>No polls available</p>
+{{ endif }}
