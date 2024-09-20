@@ -1,0 +1,45 @@
+services:
+  db:
+    build:
+      context: ../Docker
+      dockerfile: Dockerfile
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - django
+
+  backend:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    container_name: django_app
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ../:/app
+      - ./media:/app/media  # Volumen para archivos subidos - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: db
+      DATABASE_URL: postgres://postgres:Tala2Capo8@db/mysite
+    depends_on:
+      - db
+    networks:
+      - django
+
+volumes:
+  postgres_data:
+
+networks:
+  django:
+    driver: bridge
